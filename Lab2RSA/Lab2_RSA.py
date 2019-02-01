@@ -18,7 +18,7 @@ def PowerMod(a, b, n):
     while 1:
         if b % 2 == 1:
             r = r * a % n
-        b /=2
+        b //=2
         if b == 0: 
             break
         a = a * a % n
