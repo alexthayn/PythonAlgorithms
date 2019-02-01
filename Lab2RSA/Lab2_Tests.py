@@ -16,6 +16,7 @@ def test_PowerMod():
     assert PowerMod(6,2,3) == 0
     assert PowerMod(1,8,2) == 1
     assert PowerMod(2,8,7) == 4
+    assert PowerMod(4,3,5) == 4
     assert PowerMod(8,3,49320) == 512
     assert PowerMod(100,918,2000403402) == 1194280768
 
@@ -27,16 +28,14 @@ def test_MultiplicativeInverse():
     assert MultiplicativeInverse(23,28) == 11
     assert MultiplicativeInverse(324,4123) == 2965
 
-def test_StringToIntArr():
+def test_StringToIntArrAndBackAgain():
     assert StringToIntArr('') == []
-    assert StringToIntArr('1a@#') == [49, 97, 64, 35]
-    assert StringToIntArr('1,2,3,4') == [49, 44, 50, 44, 51, 44, 52]
-    assert StringToIntArr('abcde') == [97,98,99,100,101]
-    assert StringToIntArr('HELLO!') == [72,69,76,76,79,33]
-
-def test_IntArrToString():
     assert IntArrToString([]) == ''
+    assert StringToIntArr('1a@#') == [49, 97, 64, 35]
     assert IntArrToString([49, 97, 64, 35]) == '1a@#'
+    assert StringToIntArr('1,2,3,4') == [49, 44, 50, 44, 51, 44, 52]
     assert IntArrToString([49, 44, 50, 44, 51, 44, 52]) == '1,2,3,4'
+    assert StringToIntArr('abcde') == [97,98,99,100,101]
     assert IntArrToString([97,98,99,100,101]) == 'abcde'
+    assert StringToIntArr('HELLO!') == [72,69,76,76,79,33]
     assert IntArrToString([72,69,76,76,79,33]) == 'HELLO!'
