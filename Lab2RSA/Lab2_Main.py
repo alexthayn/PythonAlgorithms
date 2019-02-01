@@ -2,7 +2,7 @@
 import Lab2_RSA
 
 def main():
-    m = raw_input("Enter a message to be encrypted: ")
+    m = input("Enter a message to be encrypted: ")
     message = str(m)
     Ciphertext = Lab2_RSA.EncryptRSA(message)
     print("The original message was: " + message)
