@@ -1,9 +1,11 @@
 #Alex Thayn 2/10/19
 
 # 2. Implement an algorithm to find the kth to last element of a singly linked list
+# Given a list: 1 -> 23 -> 59 -> 2  
+# The 2nd to last element would be 23, the 0th to last element would be 2, etc.
 
 #Find the kth to last element
-#return None if there is no element at that location
+#Return None if there is no element at that location
 def kthToLastElement(list, k):
     if list == None:
         return None
@@ -33,6 +35,18 @@ class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
+
+
+if __name__ == "__main__":
+    list = Node(1)
+    list.next = Node(23)
+    list.next.next = Node(59)
+    list.next.next.next = Node(2)
+    print("Given a list with values: 1 -> 23 -> 59 -> 2  we will find the kth value")
+    print("0th from last value is: " + str(kthToLastElement(list,0)))
+    print("2nd from last value is: " + str(kthToLastElement(list, 2)))
+    print("3rd from last value is: " + str(kthToLastElement(list,3)))
+    print("4th from last value is: " + str(kthToLastElement(list, 4)))
 
 
 ####################### Unit tests #######################
@@ -67,4 +81,5 @@ def test_kthTolastElement():
     assert kthToLastElement(list6,0) == 1
     assert kthToLastElement(list6,100) ==None
     assert kthToLastElement(list6,2) == 234
+
 ##################### End Unit tests #####################
