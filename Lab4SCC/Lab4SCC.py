@@ -12,8 +12,27 @@ def reverseGraphAdjacencyList(adjacencyList):
     return reversedList
 
 #Take an adjacency list representation of a graph and performs a depth-first search (in linear time)
+def depthFirstSearch(adjacencyList, node, clockNum = 0):
+    #track visited nodes
+    visited = [False]*len(adjacencyList)
+    visited[node] = True
+    searchNodeList = list()
+    nodeValues = SearchNode(node)
+    nodeValues.preClock = clockNum
+    clockNum +=1
+    for v in adjacencyList[node]:
+        if visited[v] == False:
+            depthFirstSearch(adjacencyList, v, clockNum)
 
-#Test reversed graph function
+    nodeValues.postClock = clockNum
+    clockNum+=1
+
+    searchNodeList.append(nodeValues)
+
+    return searchNodeList
+
+
+#Test reversed graph function on a directed graph 
 def test_reverseGraphAdjacencyList_directedGraph():
     adjList = [(1,2),(2,3),(4,5),(5,6),(6,4),(4,1)]
     originalGraph = defaultdict(list)
@@ -27,6 +46,16 @@ def test_reverseGraphAdjacencyList_directedGraph():
 
     assert reverseGraphAdjacencyList(originalGraph) == reversedGraph
 
+class SearchNode:
+    def __init__(self,value):
+        self.value = value
+        self.preClock = None
+        self.postClock = None
+
+
+########################################## TESTS ##########################################
+
+#Test reversed graph function on an undirected graph 
 def test_reverseGraphAdjacencyList_undirectedGraph():
     adjList = [(0,1),(0,4),(1,0),(1,4),(1,2),(1,3),(2,1),(2,3),(3,1),(3,4),(3,2),(4,3),(4,0),(4,1)]
     originalGraph = defaultdict(list)
@@ -38,7 +67,6 @@ def test_reverseGraphAdjacencyList_undirectedGraph():
     assert sorted(reverseGraphAdjacencyList(originalGraph)) == sorted(originalGraph)
 
 #Test depth-first search function
-
 if __name__ == "__main__":
     adjList = [(1,2),(2,3),(4,5),(5,6),(6,4),(4,1)]
     originalGraph = defaultdict(list)
@@ -51,3 +79,7 @@ if __name__ == "__main__":
     reversedGraph = reverseGraphAdjacencyList(originalGraph)
     print("Reversed graph: ")
     print(reversedGraph.items())
+
+    dfsResults = depthFirstSearch(originalGraph, next(iter(originalGraph)))
+    print(dfsResults[0].postClock)
+    print(dfsResults[2].postClock)
