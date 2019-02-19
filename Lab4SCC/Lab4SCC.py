@@ -4,8 +4,11 @@
 from collections import defaultdict
 
 #Take an adjacency list representation of a graph and returns a reversed graph
+
 def reverseGraphAdjacencyList(adjacencyList):
     reversedList = defaultdict(list)
+    #make sure we create a node for every value so the length is correct
+    #reversedList = list([] for _ in range(len(adjacencyList)))
     for node1, values in adjacencyList.items():
         for value in values:
             reversedList[value].append(node1)
