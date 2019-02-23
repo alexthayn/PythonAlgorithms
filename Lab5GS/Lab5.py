@@ -84,10 +84,11 @@ if __name__ == "__main__":
     graph.addEdge(6,4)
 
     path = graph.DFS1(3, 6)
-        
+    print("Depth first search from 3 to 6: ")    
     while(len(path)>0):
         print(path.pop())
 
-    path = graph.BFS(3,6)
+    print("Breadth first search from 3 to 4: ")
+    path = graph.BFS(3,4)
     while(len(path)>0):
         print(path.pop())
