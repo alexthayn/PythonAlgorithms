@@ -28,22 +28,37 @@ class Graph:
                     pq.add(neighbor)
         #self.DFS_Recursive(firstNode, visited)
 
+    def DFS1(self, source, target):
+        stack = [(source, [source])]
+        visited = set()
 
-    def DFS_Recursive(self, node, visited):
-        visited[node] = True
-        print(node)
-
-        for neighbor in self.graph[node]:
-            print("neighbor:" ,neighbor)
-            if visited[neighbor] == False:
-                self.DFS_Recursive(neighbor, visited)
+        while stack:
+            (node, path) = stack.pop()
+            if node not in visited:
+                if node == target:
+                    return path
+                visited.add(node)
+                for neighbor in self.graph[node]:
+                    stack.append((neighbor, path + [neighbor]))
 
     # Breadth first search with a priority queue
-    def BFS(self):
-        pass
+    def BFS(self, source, target):
+        queue = []
+        queue.append([source])
+        
+        while len(queue) > 0:
+            path = queue.pop(0)
+            node = path[-1]
+            if node == target:
+                return path
+
+            for neighbor in self.graph[node]:
+                newPath = list(path)
+                newPath.append(neighbor)
+                queue.append(newPath)
 
     # Dijkstra's algorithm
-    def Dijkstra(self):
+    def Dijkstra(self, source, target):
         pass
 
     # A* algorithm
@@ -68,7 +83,11 @@ if __name__ == "__main__":
     graph.addEdge(5,6)
     graph.addEdge(6,4)
 
-    path = graph.DFS(2, 6)
+    path = graph.DFS1(3, 6)
         
+    while(len(path)>0):
+        print(path.pop())
+
+    path = graph.BFS(3,6)
     while(len(path)>0):
         print(path.pop())
