@@ -94,7 +94,7 @@ def huffmanTree(dict):
         pq.add(parent)
 
         leftNode.parent = rightNode.parent = parent
-
+        
         #create a tree codec to store the tree and its leaves
     treeCodec = TreeCodec(pq.pop())
     treeCodec.leaves = leafNodes
