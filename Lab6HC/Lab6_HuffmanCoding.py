@@ -77,7 +77,6 @@ def huffmanTree(dict):
         leafNodes.append(node)
         pq.add(node, -freq)
 
-    root = None
     #Build huffman tree
     while len(pq) > 1:
         #take the two lowest frequency values and connect them
@@ -95,10 +94,9 @@ def huffmanTree(dict):
         pq.add(parent)
 
         leftNode.parent = rightNode.parent = parent
-        root = parent
 
         #create a tree codec to store the tree and its leaves
-    treeCodec = TreeCodec(root)
+    treeCodec = TreeCodec(pq.pop())
     treeCodec.leaves = leafNodes
     return treeCodec    
 
