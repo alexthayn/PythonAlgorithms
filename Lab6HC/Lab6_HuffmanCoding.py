@@ -21,9 +21,11 @@ class TreeCodec:
 
     #find matching leaf node for symbol follow it up until we reach root
     def encode(self, symbols):
-        encoding = ''
-        
+        if symbols == '' or None:    
+            return None
+
         #iterate through message passed in
+        encoding = ''        
         for symbol in symbols:
             encodedSymbol = ''
             symbolNode = None
@@ -39,12 +41,29 @@ class TreeCodec:
                 encodedSymbol += symbolNode.codeValue
                 symbolNode = symbolNode.parent
 
+            #reverse encoded value because we started at the root
             encoding += encodedSymbol[::-1]
 
         return encoding
 
     def decode(self, bits):
-        pass
+        message = ''
+        treeIter = self.root
+        for bit in bits:
+            if bit == '1':
+                if treeIter.rightChild == None:
+                    message += treeIter.data
+                    print(treeIter.data)
+                    treeIter = self.root                
+                else: treeIter = treeIter.rightChild
+            else:
+                if treeIter.leftChild == None:
+                    message += treeIter.data
+                    print(treeIter.data)
+                    treeIter = self.root
+                else: treeIter = treeIter.leftChild
+        return message
+
 
 # I decided to have this return a tree codec instead of just a bintreenode, this way I could still maintain references to the leaves of the tree
 def huffmanTree(dict):
@@ -55,7 +74,8 @@ def huffmanTree(dict):
         node = BinTreeNode(freq, symbol)
         leafNodes.append(node)
         pq.add(node, -freq)
-    root = BinTreeNode(1)
+
+    root = None
     #Build huffman tree
     while len(pq) > 1:
         #take the two lowest frequency values and connect them
@@ -74,10 +94,10 @@ def huffmanTree(dict):
 
         leftNode.parent = rightNode.parent = parent
         root = parent
-        
+
         #create a tree codec to store the tree and its leaves
-        treeCodec = TreeCodec(root)
-        treeCodec.leaves = leafNodes
+    treeCodec = TreeCodec(root)
+    treeCodec.leaves = leafNodes
     return treeCodec    
 
 #################################################################
@@ -95,13 +115,13 @@ if __name__ == "__main__":
     }
 
     tree = huffmanTree(huffmanDict)
-
-    while tree.root.rightChild != None:
-        print(tree.root.rightChild.data)
-        tree.root = tree.root.rightChild
+    
 
     eMessage = tree.encode("abc")
     print(eMessage)
+
+    print("Decoding: ")
+    print(tree.decode(eMessage))
 
 
 #################################################################
