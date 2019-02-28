@@ -47,21 +47,23 @@ class TreeCodec:
         return encoding
 
     def decode(self, bits):
+        if bits == '':
+            return None
         message = ''
         treeIter = self.root
         for bit in bits:
+            if treeIter.leftChild == None:
+                message += treeIter.data
+                treeIter = self.root
             if bit == '1':
-                if treeIter.rightChild == None:
-                    message += treeIter.data
-                    print(treeIter.data)
-                    treeIter = self.root                
-                else: treeIter = treeIter.rightChild
+                treeIter = treeIter.rightChild
             else:
-                if treeIter.leftChild == None:
-                    message += treeIter.data
-                    print(treeIter.data)
-                    treeIter = self.root
-                else: treeIter = treeIter.leftChild
+                treeIter = treeIter.leftChild
+        # get last symbol
+        if treeIter.leftChild == None:
+            message += treeIter.data
+        else:
+            message = "Unable to decode message."
         return message
 
 
@@ -114,15 +116,47 @@ if __name__ == "__main__":
         "z": 1,
     }
 
+    print(  """
+    Symbol frequencies:
+        "a": z
+        "b": 5
+        "c": 18
+        "x": 30
+        "y": 2
+        "z": 1
+
+    Encoded values:
+        a: 1110
+        b: 110
+        c: 10 
+        x: 0
+        y: 11110
+        z: 11111
+    """)
     tree = huffmanTree(huffmanDict)
-    
+    message = 'abc'
+    print("Encoding: %s"%(message))
+    eMessage = tree.encode(message)
+    print("   Result: %s" %eMessage)
 
-    eMessage = tree.encode("abc")
-    print(eMessage)
+    print("Decoding: %s"%(eMessage))
+    print("    Result: %s"%tree.decode(eMessage))
 
-    print("Decoding: ")
-    print(tree.decode(eMessage))
+    message = 'Hello'
+    print("\nEncoding: %s"%(message))
+    print("   Result: %s" %tree.encode(message))
 
+    message = 'xxxyyyzzz'
+    print("\nEncoding: %s"%(message))
+    eMessage = tree.encode(message)
+    print("   Result: %s" %eMessage)
+
+    print("Decoding: %s"%(eMessage))
+    print("    Result: %s"%tree.decode(eMessage))
+
+    eMessage = '111111'
+    print("\nDecoding: %s"%eMessage)
+    print("    Result: %s"%tree.decode(eMessage))
 
 #################################################################
 ############################# TESTS #############################
@@ -187,4 +221,4 @@ def test_treeCodec_Decode():
     assert testTree.decode('111011010') == 'abc'
     assert testTree.decode('111111111111111111011010') == 'zzzabc'
     assert testTree.decode('') == None
-    assert testTree.decode('0011111110') == None
+    assert testTree.decode('0011111111') == "Unable to decode message."
