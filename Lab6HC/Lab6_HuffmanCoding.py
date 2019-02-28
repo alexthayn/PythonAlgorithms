@@ -161,6 +161,7 @@ if __name__ == "__main__":
 #################################################################
 ############################# TESTS #############################
 ################################################################# 
+#Setup dictionary and tree to use for tests
 huffmanTestDict = {
     "a": 4,
     "b": 5,
@@ -169,8 +170,16 @@ huffmanTestDict = {
     "y": 2,
     "z": 1,
 }
-
 testTree = huffmanTree(huffmanTestDict)
+
+def test_BinTreeNode():
+    testNode = BinTreeNode(2, 'a')
+    assert testNode.data == 'a'
+    assert testNode.freq == 2
+    assert testNode.codeValue == None
+    assert testNode.parent == None
+    assert testNode.rightChild == testNode.leftChild == None
+
 
 def test_HuffmanTree():
     simpleDict = {
