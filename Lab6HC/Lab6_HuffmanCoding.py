@@ -19,19 +19,29 @@ class TreeCodec:
         self.root = rootNode
         self.leaves = None
 
+    #find matching leaf node for symbol follow it up until we reach root
     def encode(self, symbols):
-        #find matching leaf node for symbol follow it up until we reach root
         encoding = ''
+        
+        #iterate through message passed in
         for symbol in symbols:
+            encodedSymbol = ''
             symbolNode = None
             for index, item in enumerate(self.leaves):
                 if item.data == symbol:
-                    symbolNode = item
-                else:
-                    print("The symbol %s is not in the current huffman tree", symbol)
+                    symbolNode = self.leaves[index]
+                
+            if symbolNode == None: 
+                print("The symbol %s was not found" %(symbol))
+                return None
+
             while(symbolNode.parent != None):
-                encoding += symbolNode.codeValue
-                symbolNode = symbol.Parent
+                encodedSymbol += symbolNode.codeValue
+                symbolNode = symbolNode.parent
+
+            encoding += encodedSymbol[::-1]
+
+        return encoding
 
     def decode(self, bits):
         pass
@@ -70,6 +80,9 @@ def huffmanTree(dict):
         treeCodec.leaves = leafNodes
     return treeCodec    
 
+#################################################################
+############################# MAIN ##############################
+#################################################################
 if __name__ == "__main__":
     #construct a dictionary for which we want to build a huffman tree
     huffmanDict = {
@@ -87,6 +100,23 @@ if __name__ == "__main__":
         print(tree.root.rightChild.data)
         tree.root = tree.root.rightChild
 
+    eMessage = tree.encode("abc")
+    print(eMessage)
+
+
+#################################################################
+############################# TESTS #############################
+################################################################# 
+huffmanTestDict = {
+    "a": 4,
+    "b": 5,
+    "c": 18,
+    "x": 30,
+    "y": 2,
+    "z": 1,
+}
+
+testTree = huffmanTree(huffmanTestDict)
 
 def test_HuffmanTree():
     simpleDict = {
@@ -98,27 +128,43 @@ def test_HuffmanTree():
     result =  huffmanTree(simpleDict)
     print(result.root.rightChild.data)
     print(result.root.leftChild.data)
-    tree = huffmanTree(simpleDict)
+    sTree = huffmanTree(simpleDict)
 
-    assert tree.root.data == simpleTree.data
-    assert tree.root.freq == simpleTree.freq
+    assert sTree.root.data == simpleTree.data
+    assert sTree.root.freq == simpleTree.freq
 
 
-def test_HuffmanTreeMoreNodes():
-    huffmanDict = {
-        "a": 4,
-        "b": 5,
-        "c": 18,
-        "x": 30,
-        "y": 2,
-        "z": 1,
-    }
+def test_HuffmanTreeMoreNodes():    
+    assert testTree.root.freq == sum(huffmanTestDict.values())
+    assert testTree.root.data == 'xcbayz'
+    assert testTree.root.leftChild.data == 'x'
+    assert testTree.root.rightChild.leftChild.data == 'c'
+    assert testTree.root.rightChild.rightChild.rightChild.leftChild.data == 'a'
+    assert testTree.root.rightChild.rightChild.data == 'bayz'
 
-    tree = huffmanTree(huffmanDict)
-    
-    assert tree.root.freq == sum(huffmanDict.values())
-    assert tree.root.data == 'xcbayz'
-    assert tree.root.leftChild.data == 'x'
-    assert tree.root.rightChild.leftChild.data == 'c'
-    assert tree.root.rightChild.rightChild.rightChild.leftChild.data == 'a'
-    assert tree.root.rightChild.rightChild.data == 'bayz'
+def test_treeCodec_Encode():
+    assert testTree.encode('abc') == '111011010'
+    assert testTree.encode('xyx') == '0111100'
+    assert testTree.encode('zzzabc') == '111111111111111111011010'
+    assert testTree.encode('hello') == None
+
+def test_treeCodec_Decode():
+    """
+    Encoded values
+    a: 1110
+    b: 110
+    c: 10 
+    x: 0
+    y: 11110
+    z: 11111
+    """
+    assert testTree.decode('1110') == 'a'
+    assert testTree.decode('110') == 'b'
+    assert testTree.decode('10') == 'c'
+    assert testTree.decode('0') == 'x'
+    assert testTree.decode('11110') == 'y'
+    assert testTree.decode('11111') == 'z'
+    assert testTree.decode('111011010') == 'abc'
+    assert testTree.decode('111111111111111111011010') == 'zzzabc'
+    assert testTree.decode('') == None
+    assert testTree.decode('0011111110') == None
