@@ -45,6 +45,9 @@ if __name__ == "__main__":
     answer = numCubesOnOutside(n)
     print("A %dx%dx%d cube has %s cubes with at least one face showing"%(n,n,n,answer))
 
+    n = 500
+    answer = numCubesOnOutside(n)
+    print("A %dx%dx%d cube has %s cubes with at least one face showing"%(n,n,n,answer))
 
     print("Merge two sorted arrays:")
     a = [2,6,7,10]
