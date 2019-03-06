@@ -5,11 +5,8 @@ from collections import namedtuple
 def knapval_rep(capacity, items):
     K = [0]*(capacity+1)
 
-    for wt in range(1,capacity):
-        print(K)
-        print(max([(K[wt-item.weight] + item.value) 
-        for item in items if item.weight <= wt]+[0]))
-        K[wt] = max([(K[wt-item.weight] + item.value) 
+    for wt in range(1,len(K)):
+        K[wt] = max([(K[wt-item.weight] + item.value) #list comprehension syntax
         for item in items if item.weight <= wt]+[0])
     return K[capacity]
 
@@ -23,7 +20,7 @@ if __name__ == "__main__":
         Item(4,16),
         Item(2,9)
     ]
-    print("Max value is: %d"%knapval_rep(10,loot))
+    print("For the knapsack problem with repets the max value is: %d"%knapval_rep(10,loot))
 
 def test_knapval_rep():
     loot = [
