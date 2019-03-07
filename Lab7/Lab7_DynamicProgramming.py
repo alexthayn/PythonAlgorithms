@@ -27,8 +27,23 @@ def knapsack_0_1(capacity, items):
                     K[i-1][c-items[i].weight] + items[i].value,
                     K[i-1][c]
                 )
-    print(K)
     return K[len(items)-1][capacity]
+
+# Minimum edit-distance
+def edit_distance(str1, str2):
+    T = [[0 for i in range(len(str1)+1)] for j in range(len(str2)+1)]
+    #initialize 2d array with correct start values
+    for i in range(len(str1)+1):
+        T[0][i] = i
+    for j in range(len(str2)+1):
+        T[j][0] = j
+    for i in range(1,len(str1)+1):
+        for j in range(1,len(str2)+1):
+            if(str1[i-1] == str2[j-1]):
+                T[j][i] = T[j-1][i-1] # get the diagonal value because these two chars are the same
+            else:
+                T[j][i] = 1 + min(T[j-1][i],T[j-1][i-1],T[j][i-1]) # 1 + min(top,left,diagonal)
+    return T[len(str2)][len(str1)]
 
 # loot item for knapsack
 Item = namedtuple('Item', ['weight', 'value'])
@@ -40,8 +55,11 @@ loot = [
     ]
 
 if __name__ == "__main__":
-    #print("For the knapsack problem with repeats the max value is: %d"%knapsack_unbounded(500,loot))
-    print(knapsack_0_1(10,loot))
+    print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
+    print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
+    print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
+    print("The minimum edit distance between exponential and polynomial is: %d"% edit_distance("exponential","polynomial"))
+
 
 def test_knapsack_unbounded():    
     assert knapsack_unbounded(0,loot) == 0
@@ -61,3 +79,11 @@ def test_knapsack_0_1():
     assert knapsack_0_1(10,loot) == 46
     assert knapsack_0_1(20,loot) == 69
     assert knapsack_0_1(1000,loot) == sum(item.value for item in loot)
+
+def test_edit_distance():
+    assert edit_distance("","") == 0
+    assert edit_distance("Blue","Blue") == 0
+    assert edit_distance("Hello", "Jello") == 1
+    assert edit_distance("blue", "bear") == 3
+    assert edit_distance("abcdef", "azced") == 3
+    assert edit_distance("exponential", "polynomial") == 6
