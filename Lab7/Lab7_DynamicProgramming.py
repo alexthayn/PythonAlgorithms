@@ -3,7 +3,9 @@ from collections import namedtuple
 # loot item for knapsack
 Item = namedtuple('Item', ['weight', 'value'])
 
+#############################################
 # Knapsack with repeated items
+#############################################
 def knapsack_unbounded(capacity, items):
     if(capacity < 1):
         return 0
@@ -14,7 +16,9 @@ def knapsack_unbounded(capacity, items):
         for item in items if item.weight <= wt]+[0])
     return K[capacity]
 
-# Knapsack with zero or one items allowed
+#############################################
+# Knapsack with zero or one of each item allowed
+#############################################
 def knapsack_0_1(capacity, items):
     if(capacity < 1):
         return 0
@@ -31,7 +35,9 @@ def knapsack_0_1(capacity, items):
                 )
     return K[len(items)-1][capacity]
 
+#############################################
 # Minimum edit-distance
+#############################################
 def edit_distance(str1, str2):
     T = [[0 for i in range(len(str1)+1)] for j in range(len(str2)+1)]
     #initialize 2d array with correct start values
@@ -47,7 +53,9 @@ def edit_distance(str1, str2):
                 T[j][i] = 1 + min(T[j-1][i],T[j-1][i-1],T[j][i-1]) # 1 + min(top,left,diagonal)
     return T[len(str2)][len(str1)]
 
+#############################################
 # Length of longest increasing subsequence
+#############################################
 def longest_subsequence(seq):
     if len(seq) < 1:
         return 0
@@ -61,8 +69,11 @@ def longest_subsequence(seq):
                 if L[j] + 1 > L[i]:
                     L[i] = 1 + L[j]
             j+= 1
-
     return max(L)
+
+#############################################
+# Length of shortest s, t path through a dag
+#############################################
 
 loot = [
         Item(6,30),
@@ -71,13 +82,18 @@ loot = [
         Item(2,9)
     ]
 
+#############################################
+# MAIN
+#############################################
 if __name__ == "__main__":
-    # print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
-    # print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
-    # print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
-    # print("The minimum edit distance between exponential and polynomial is: %d"% edit_distance("exponential","polynomial"))
-    longest_subsequence([2,5,1,8,3])
+    print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
+    print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
+    print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
+    print("The longest increasing subsequence of 2,5,1,8,3 is: %d"%longest_subsequence([2,5,1,8,3]))
 
+#############################################
+# TESTS
+#############################################
 def test_knapsack_unbounded():    
     assert knapsack_unbounded(0,loot) == 0
     assert knapsack_unbounded(1,loot) == 0
