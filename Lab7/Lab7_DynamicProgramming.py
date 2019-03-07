@@ -1,5 +1,7 @@
 #Lab 7:Dynamic Programming
 from collections import namedtuple
+# loot item for knapsack
+Item = namedtuple('Item', ['weight', 'value'])
 
 # Knapsack with repeated items
 def knapsack_unbounded(capacity, items):
@@ -45,8 +47,23 @@ def edit_distance(str1, str2):
                 T[j][i] = 1 + min(T[j-1][i],T[j-1][i-1],T[j][i-1]) # 1 + min(top,left,diagonal)
     return T[len(str2)][len(str1)]
 
-# loot item for knapsack
-Item = namedtuple('Item', ['weight', 'value'])
+# Length of longest increasing subsequence
+def longest_subsequence(seq):
+    if len(seq) < 1:
+        return 0
+
+    L = [1]*len(seq)
+
+    for i in range(1,len(seq)):
+        j = 0
+        while  j < i:
+            if seq[i] > seq[j]:
+                if L[j] + 1 > L[i]:
+                    L[i] = 1 + L[j]
+            j+= 1
+
+    return max(L)
+
 loot = [
         Item(6,30),
         Item(3,14),
@@ -55,11 +72,11 @@ loot = [
     ]
 
 if __name__ == "__main__":
-    print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
-    print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
-    print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
-    print("The minimum edit distance between exponential and polynomial is: %d"% edit_distance("exponential","polynomial"))
-
+    # print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
+    # print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
+    # print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
+    # print("The minimum edit distance between exponential and polynomial is: %d"% edit_distance("exponential","polynomial"))
+    longest_subsequence([2,5,1,8,3])
 
 def test_knapsack_unbounded():    
     assert knapsack_unbounded(0,loot) == 0
@@ -78,7 +95,7 @@ def test_knapsack_0_1():
     assert knapsack_0_1(2,loot) == 9
     assert knapsack_0_1(10,loot) == 46
     assert knapsack_0_1(20,loot) == 69
-    assert knapsack_0_1(1000,loot) == sum(item.value for item in loot)
+    assert knapsack_0_1(75,loot) == sum(item.value for item in loot)
 
 def test_edit_distance():
     assert edit_distance("","") == 0
@@ -87,3 +104,11 @@ def test_edit_distance():
     assert edit_distance("blue", "bear") == 3
     assert edit_distance("abcdef", "azced") == 3
     assert edit_distance("exponential", "polynomial") == 6
+
+def test_longest_subsequence():
+    assert longest_subsequence([]) == 0
+    assert longest_subsequence([1]) == 1
+    assert longest_subsequence([0,1,2,3,4,6,7,8,9,10,11,12,13]) == 13
+    assert longest_subsequence([3,4,-1,0,6,2,3]) == 4
+    assert longest_subsequence([2,5,1,8,3]) == 3
+    assert longest_subsequence([5,2,8,6,3,6,9,7]) == 4
