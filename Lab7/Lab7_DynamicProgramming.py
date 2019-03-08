@@ -74,10 +74,13 @@ def longest_subsequence(seq):
     return max(L)
 
 class GraphNode:
-    def __init__(self,data):
+    def __init__(self,data, parents = None):
         self.data = data
+        self.parentNodes = parents
         self.children = []
         self.numPaths = None
+        self.maxPath = None
+        self.minPath = None
 
     def addChild(self, child):
         self.children.append(child)
@@ -86,7 +89,7 @@ class GraphNode:
 #############################################
 # Number of s, t paths through a dag
 #############################################
-#@lru_cache(maxsize=None)
+@lru_cache(maxsize=None)
 def numOfPaths(s, t):
     if s == t:
         return 1
@@ -98,10 +101,26 @@ def numOfPaths(s, t):
 #############################################
 # Length of longest s, t path through a dag
 #############################################
+@lru_cache(maxsize=None)
+def longestPath(s,t):
+    if s == t:
+        return 0
+    else:
+        if not s.maxPath:
+            s.maxPath = max(longestPath(child, t)+1 for child in s.children)
+    return s.maxPath
 
 #############################################
 # Length of shortest s, t path through a dag
 #############################################
+@lru_cache(maxsize=None)
+def shortestPath(s,t):
+    if s == t:
+        return 0
+    else:
+        if not s.minPath:
+            s.minPath = min(longestPath(child, t)+1 for child in s.children)
+    return s.minPath
 
 loot = [
         Item(6,30),
@@ -112,11 +131,11 @@ loot = [
 
 # DAG creation
 s = GraphNode('S')
-a = GraphNode('A')
-b = GraphNode('B')
-c = GraphNode('C')
-d = GraphNode('D')
-t = GraphNode('T')
+b = GraphNode('B',[s])
+a = GraphNode('A',[s,b])
+c = GraphNode('C',[b])
+d = GraphNode('D',[c])
+t = GraphNode('T',[a,c,d])
 s.addChild(a)
 s.addChild(b)
 a.addChild(t)
@@ -129,12 +148,21 @@ d.addChild(t)
 # MAIN
 #############################################
 if __name__ == "__main__":
-    # print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
-    # print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
-    # print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
-    # print("The longest increasing subsequence of 2,5,1,8,3 is: %d"%longest_subsequence([2,5,1,8,3]))
-    print(numOfPaths(s,t))
-
+    print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
+    print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
+    print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
+    print("The longest increasing subsequence of 2,5,1,8,3 is: %d"%longest_subsequence([2,5,1,8,3]))
+    print("""   
+    DAG Adjacency List: 
+    S: A, B
+    A: T
+    B: A, C
+    C: D, T
+    D: T
+    T: None""")
+    print("The number of paths from S to T is: %d"%numOfPaths(s,t))
+    print("The longest path from S to T is: %d"%longestPath(s,t))
+    print("The shortest path from S to T is: %d"%shortestPath(s,t))
 #############################################
 # TESTS
 #############################################
@@ -173,9 +201,24 @@ def test_longest_subsequence():
     assert longest_subsequence([2,5,1,8,3]) == 3
     assert longest_subsequence([5,2,8,6,3,6,9,7]) == 4
 
-def test_numberOfPath():
+def test_numberOfPaths():
     assert numOfPaths(s,t) == 4
     assert numOfPaths(c,t) == 2
     assert numOfPaths(t,t) == 1
     assert numOfPaths(a,t) == 1
     assert numOfPaths(b,t) == 3
+
+def test_longestPath():
+    assert longestPath(s,t) == 4
+    assert longestPath(a,t) == 1
+    assert longestPath(b,t) == 3
+    assert longestPath(c,t) == 2
+    assert longestPath(d,t) == 1
+    assert longestPath(b,d) == 3
+    
+def test_shortestPath():
+    assert shortestPath(s,t) == 2
+    assert shortestPath(a,t) == 1
+    assert shortestPath(b,t) == 2
+    assert shortestPath(c,t) == 1
+    assert shortestPath(d,t) == 1

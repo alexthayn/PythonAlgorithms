@@ -1,1 +1,4 @@
-{}
+{
+  "Lab7_DynamicProgramming.py::test_numVertices": true,
+  "Lab7_DynamicProgramming.py::test_shortestPath": true
+}
