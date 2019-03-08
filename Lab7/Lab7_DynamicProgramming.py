@@ -1,5 +1,7 @@
 #Lab 7:Dynamic Programming
 from collections import namedtuple
+from functools import lru_cache, reduce
+
 # loot item for knapsack
 Item = namedtuple('Item', ['weight', 'value'])
 
@@ -71,6 +73,32 @@ def longest_subsequence(seq):
             j+= 1
     return max(L)
 
+class GraphNode:
+    def __init__(self,data):
+        self.data = data
+        self.children = []
+        self.numPaths = None
+
+    def addChild(self, child):
+        self.children.append(child)
+
+
+#############################################
+# Number of s, t paths through a dag
+#############################################
+#@lru_cache(maxsize=None)
+def numOfPaths(s, t):
+    if s == t:
+        return 1
+    else:
+        if not s.numPaths:
+            s.numPaths = sum(numOfPaths(child, t) for child in s.children)
+    return s.numPaths
+
+#############################################
+# Length of longest s, t path through a dag
+#############################################
+
 #############################################
 # Length of shortest s, t path through a dag
 #############################################
@@ -82,14 +110,30 @@ loot = [
         Item(2,9)
     ]
 
+# DAG creation
+s = GraphNode('S')
+a = GraphNode('A')
+b = GraphNode('B')
+c = GraphNode('C')
+d = GraphNode('D')
+t = GraphNode('T')
+s.addChild(a)
+s.addChild(b)
+a.addChild(t)
+b.addChild(a)
+b.addChild(c)
+c.addChild(t)
+c.addChild(d)
+d.addChild(t)
 #############################################
 # MAIN
 #############################################
 if __name__ == "__main__":
-    print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
-    print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
-    print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
-    print("The longest increasing subsequence of 2,5,1,8,3 is: %d"%longest_subsequence([2,5,1,8,3]))
+    # print("The knapsack with capacity 500 and repeats allowed the max value is: %d"%knapsack_unbounded(500,loot))
+    # print("The knapsack with capacity 10 and no repeats the max value is: %d"% knapsack_0_1(10,loot))
+    # print("The minimum edit distance between abcdef and azced is: %d"% edit_distance("abcdef","azced"))
+    # print("The longest increasing subsequence of 2,5,1,8,3 is: %d"%longest_subsequence([2,5,1,8,3]))
+    print(numOfPaths(s,t))
 
 #############################################
 # TESTS
@@ -128,3 +172,10 @@ def test_longest_subsequence():
     assert longest_subsequence([3,4,-1,0,6,2,3]) == 4
     assert longest_subsequence([2,5,1,8,3]) == 3
     assert longest_subsequence([5,2,8,6,3,6,9,7]) == 4
+
+def test_numberOfPath():
+    assert numOfPaths(s,t) == 4
+    assert numOfPaths(c,t) == 2
+    assert numOfPaths(t,t) == 1
+    assert numOfPaths(a,t) == 1
+    assert numOfPaths(b,t) == 3
