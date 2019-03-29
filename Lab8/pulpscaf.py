@@ -60,54 +60,22 @@ class LP_Graph:
 
     # Generate a list of constraints for the max flow problem
     def getConstraints(self):
-        # constraintList = []
-        # constraintList.append(f'o_{self.source.label} - i_{self.target.label} = 0')
-
-        # 
-        # for n in self.nodes:
-        #     constraintList.append(f'i_{n.label} - o_{n.label} = 0')
-
-        #
-        # for n in self.nodes:
-        #     singleConstraint = ''
-        #     for inputNode in n.input:
-        #         singleConstraint += f' + {self.edge_vars[inputNode.label,n.label][0]}'
-        #     if(singleConstraint != ''):
-        #         singleConstraint += f' = o_{n.label}'
-        #         constraintList.append(singleConstraint)
-
-        # # 4. node input = sum output edges of that node
-        # for n in self.nodes:
-        #     singleConstraint = ''
-        #     for outputNode in n.output:
-        #         singleConstraint += f' + {self.edge_vars[n.label,outputNode.label][0]}'
-        #     if(singleConstraint != ''):
-        #         singleConstraint += f' = i_{n.label}'
-        #         constraintList.append(singleConstraint)
-
-        # # 5. flow through edge <= max edge value
-        # for edge in self.edge_vars.values():
-        #     constraintList.append(f'{edge[0]} <= {edge[1]}')
-        
-        # print(constraintList)
-        # return constraintList
-
-        constraints = []
+        constraintsList = []
 
         # 1. output of the source node = input of target node
-        constraints.append(self.input_vars[self.source.label] == self.output_vars[self.target.label])
+        constraintsList.append(self.input_vars[self.source.label] == self.output_vars[self.target.label])
 
         # 2. each nodes input = each nodes output
-        constraints.extend(self.input_vars[v.label] == self.output_vars[v.label] for v in self.nodes)
+        constraintsList.extend(self.input_vars[v.label] == self.output_vars[v.label] for v in self.nodes)
 
         # 3. sum input edges to node = node output
-        constraints.extend(self.input_vars[v.label] == sum(self.edge_vars[(neighbor.label,v.label)][1] for neighbor in v.input) for v in self.nodes)
+        constraintsList.extend(self.input_vars[v.label] == sum(self.edge_vars[(neighbor.label,v.label)][1] for neighbor in v.input) for v in self.nodes)
 
         # 4. node input = sum output edges of that node
-        constraints.extend(self.output_vars[v.label] == sum(self.edge_vars[(v.label, neighbor.label)][1] for neighbor in v.output) for v in self.nodes)
+        constraintsList.extend(self.output_vars[v.label] == sum(self.edge_vars[(v.label, neighbor.label)][1] for neighbor in v.output) for v in self.nodes)
 
-        print(constraints)
-        return constraints
+        print(constraintsList)
+        return constraintsList
 
 def MaxFlow(graph):
     return lp('max', graph.input_vars[graph.target.label],graph.getConstraints())
