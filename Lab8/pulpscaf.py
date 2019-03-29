@@ -31,7 +31,39 @@ def lp1():
             x_2 <= 300,
             x_1 + x_2 <= 400])
 
+# Node class storing a node label and the neighboring input/output nodes
+class Node:
+    def __init__(self, label):
+        self.label = label
+        self.input = []
+        self.output = []
+
+# Class for storing our flow graph with nodes connected by weighted and directed edges
+class LP_Graph:
+    def __init__(self, source, target, nodes):
+        self.source = source
+        self.target = target
+        self.input_vars = {}
+        self.output_vars = {}
+        self.edge_vars = {}
+        self.nodes = nodes
+
+    # Adds a weighted directed edge to the graph from node1 --> node2
+    def addWeightedDirectedEdge(self, node1, node2, weight):
+        self.edge_vars[node1].append(node2)
+
 
 def main():
-    pass
+    S = Node('S')
+    T = Node('T')
+    A = Node('A')
+    B = Node('B')
+
+    # Create a simple graph
+    graph = LP_Graph(S,T,[S,T,A,B])
+    graph.addWeightedDirectedEdge(S,B,1)
+    graph.addWeightedDirectedEdge(A,B,4)
+    graph.addWeightedDirectedEdge(S,B,2)
+    graph.addWeightedDirectedEdge(A,T,2)
+    graph.addWeightedDirectedEdge(B,T,3)
 
