@@ -87,18 +87,22 @@ def MaxFlow(graph):
     return lp('max', graph.input_vars[graph.target.label],graph.getConstraints())
 
 if __name__ == "__main__":
-    S = Node('S')
-    T = Node('T')
     A = Node('A')
     B = Node('B')
+    C = Node('C')
+    D = Node('D')
+    E = Node('E')
+    F = Node('F')
 
-    # Create a simple graph
-    graph = LP_Graph(S,T,[S,T,A,B])
-    graph.addWeightedDirectedEdge(S,A,2)
-    graph.addWeightedDirectedEdge(A,B,4)
-    graph.addWeightedDirectedEdge(S,B,2)
-    graph.addWeightedDirectedEdge(A,T,2)
-    graph.addWeightedDirectedEdge(B,T,3)
+    graph = LP_Graph(A,F,[A,B,C,D,E,F])
+    graph.addWeightedDirectedEdge(A,B,11)
+    graph.addWeightedDirectedEdge(A,C,12)
+    graph.addWeightedDirectedEdge(C,B,1)
+    graph.addWeightedDirectedEdge(C,E,11)
+    graph.addWeightedDirectedEdge(B,D,12)
+    graph.addWeightedDirectedEdge(E,D,7)
+    graph.addWeightedDirectedEdge(D,F,19)
+    graph.addWeightedDirectedEdge(E,F,4)
 
     for edge in graph.edge_vars.items():
         print(edge)
@@ -106,8 +110,10 @@ if __name__ == "__main__":
     problem, flow, edges = MaxFlow(graph)
 
     print(f'Problem: {problem}')
-    print(f'Max Flow: {flow}')
-    print(f'Edges: {edge}')
+    print(f'Max Flow: {flow}\n')
+    print('Final Flow: ')
+    for key, value in edges.items():
+        print(key, value)
 
 def testMaxFlow():
     S = Node('S')
