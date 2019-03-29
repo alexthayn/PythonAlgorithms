@@ -73,7 +73,7 @@ class LP_Graph:
 
         # 4. node input = sum output edges of that node
         constraintsList.extend(self.output_vars[v.label] == sum(self.edge_vars[(v.label, neighbor.label)][1] for neighbor in v.output) for v in self.nodes)
-
+        
         print(constraintsList)
         return constraintsList
 
@@ -96,8 +96,6 @@ if __name__ == "__main__":
 
     for edge in graph.edge_vars.items():
         print(edge)
-
-    graph.getConstraints()
 
     print(MaxFlow(graph))
 
