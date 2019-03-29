@@ -53,7 +53,7 @@ class LP_Graph:
 
     # Adds a weighted directed edge to the graph from node1 --> node2
     def addWeightedDirectedEdge(self, node1, node2, weight):
-        self.edge_vars[(node1.label, node2.label)] = ['e_' + node1.label + node2.label, weight]
+        self.edge_vars[(node1.label, node2.label)] = LpVariable('e_' + node1.label + node2.label, 0,weight)
         # update input/output neighbors for each node
         node2.input.append(node1)
         node1.output.append(node2)
@@ -69,12 +69,18 @@ class LP_Graph:
         constraintsList.extend(self.input_vars[v.label] == self.output_vars[v.label] for v in self.nodes)
 
         # 3. sum input edges to node = node output
-        constraintsList.extend(self.input_vars[v.label] == sum(self.edge_vars[(neighbor.label,v.label)][1] for neighbor in v.input) for v in self.nodes)
+        for v in self.nodes:
+            if(len(v.input) > 0):
+                constraintsList.append(self.input_vars[v.label] == sum(self.edge_vars[(neighbor.label,v.label)] for neighbor in v.input))
 
         # 4. node input = sum output edges of that node
-        constraintsList.extend(self.output_vars[v.label] == sum(self.edge_vars[(v.label, neighbor.label)][1] for neighbor in v.output) for v in self.nodes)
+        for v in self.nodes:
+            if(len(v.output) > 0):
+                constraintsList.append(self.output_vars[v.label] == sum(self.edge_vars[(v.label, neighbor.label)] for neighbor in v.output))
         
-        print(constraintsList)
+        del constraintsList[len(self.nodes)+1]
+        del constraintsList[2*len(self.nodes)+1]
+
         return constraintsList
 
 def MaxFlow(graph):
@@ -97,7 +103,11 @@ if __name__ == "__main__":
     for edge in graph.edge_vars.items():
         print(edge)
 
-    print(MaxFlow(graph))
+    problem, flow, edges = MaxFlow(graph)
+
+    print(f'Problem: {problem}')
+    print(f'Max Flow: {flow}')
+    print(f'Edges: {edge}')
 
 def testMaxFlow():
     S = Node('S')
@@ -113,4 +123,27 @@ def testMaxFlow():
     graph.addWeightedDirectedEdge(A,T,2)
     graph.addWeightedDirectedEdge(B,T,3)
 
-    assert MaxFlow(graph) == 4
+    problem, flow, edges = MaxFlow(graph)
+    assert flow == 4
+
+def testMaxFlow_1():
+    # graph example from https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
+    A = Node('A')
+    B = Node('B')
+    C = Node('C')
+    D = Node('D')
+    E = Node('E')
+    F = Node('F')
+
+    graph = LP_Graph(A,F,[A,B,C,D,E,F])
+    graph.addWeightedDirectedEdge(A,B,11)
+    graph.addWeightedDirectedEdge(A,C,12)
+    graph.addWeightedDirectedEdge(C,B,1)
+    graph.addWeightedDirectedEdge(C,E,11)
+    graph.addWeightedDirectedEdge(B,D,12)
+    graph.addWeightedDirectedEdge(E,D,7)
+    graph.addWeightedDirectedEdge(D,F,19)
+    graph.addWeightedDirectedEdge(E,F,4)
+
+    problem, flow, edges = MaxFlow(graph)
+    assert flow == 23
