@@ -85,7 +85,7 @@ def getAndConstraints(clauses):
         if(len(clauses) == 1):
             finalConstraint = g
 
-    ANDconstraints.append(g == 1)
+    ANDconstraints.append(finalConstraint == 1)
     return ANDconstraints
 
 
@@ -141,12 +141,24 @@ def test_getVarLabels():
 def test_ilp_sat():
     prob, value, answer = ilp_sat(
         ['a,b,c', '-a,b,-c', '-d,-b', '-a,c', '-b,a'])
+    print(answer)
+    assert answer['a'] == 1
+    assert answer['_a'] == 0
+    assert answer['b'] == 1
+    assert answer['_b'] == 0
+    assert answer['c'] == 1
+    assert answer['_c'] == 0
+    assert answer['d'] == 0
+    assert answer['_d'] == 1
+
+
+def test_ilp_sat1():
+    prob, value, answer = ilp_sat(
+        ['a,-b,-c'])
 
     assert answer['a'] == 1
-    assert answer['-a'] == 0
-    assert answer['b'] == 1
-    assert answer['-b'] == 0
+    assert answer['_a'] == 0
+    assert answer['b'] == 0
+    assert answer['_b'] == 1
     assert answer['c'] == 1
-    assert answer['-c'] == 0
-    assert answer['d'] == 0
-    assert answer['-d'] == 1
+    assert answer['_c'] == 0

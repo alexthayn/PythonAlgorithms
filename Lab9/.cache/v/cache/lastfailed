@@ -1,4 +1,1 @@
-{
-  "np_reductions.py::test_getVarLabels": true,
-  "np_reductions.py::test_ilp_sat": true
-}
+{}
