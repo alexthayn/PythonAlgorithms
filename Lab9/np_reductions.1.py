@@ -148,15 +148,10 @@ if __name__ == "__main__":
     print(f'Answer to SAT equation: {arr}')
     print(answer)
 
-    arr = ['a,b', '-a,b', '-a,-b', 'a,-b']
-    answer = ilp_sat(arr)
-    print(f'Answer to SAT equation: {arr}')
-    print(answer)
+
 ######################################################################
 #TESTS################################################################
 ######################################################################
-
-
 def test_getVarLabels():
     answer = getVarLabels(['a,c,b', '-r,-j,-e,-y,-i'])
     assert answer == ['a', 'c', 'b', 'r', 'j', 'e', 'y', 'i']
@@ -192,4 +187,5 @@ def test_ilp_sat2():
 
 def test_ilp_sat3():
     answer = ilp_sat(['a,b', '-a,b', '-a,-b', 'a,-b'])
+    print(answer)
     assert answer == None
