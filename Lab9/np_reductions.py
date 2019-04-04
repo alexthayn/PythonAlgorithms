@@ -38,7 +38,11 @@ def ilp_sat(sat_formula):
     # AND the final clauses with each other
     constraints.extend(getAndConstraints(finalClauses))
 
-    return lp('max', 1, constraints)
+    p, s, a = lp('max', 1, constraints)
+    answer = getAnswer(a)
+    if checkAnswer(sat_formula, answer):
+        return answer
+    return None
 
 
 def getORConstraints(clause):
@@ -115,17 +119,32 @@ def lp(mode, objective, constraints):
     return prob, prob.objective.value(), dict((v.name, v.value()) for v in prob.variables())
 
 
-def printAnswer(answer):
+def getAnswer(answer):
+    a = {}
     for key in answer.keys():
         if len(key) == 1:
-            print(f'{key} = {answer[key]}')
+            a[key] = answer[key]
+    return a
+
+
+def checkAnswer(sat_formula, answer):
+    for clause in sat_formula:
+        orClause = False
+        c = [v.strip() for v in clause.split(',')]
+        for var in c:
+            if len(var) > 1:
+                orClause = orClause or not(answer[var[1]])
+            else:
+                orClause = orClause or answer[var]
+        if orClause == False:
+            return False
+    return True
 
 
 if __name__ == "__main__":
-    prob, value, answer = ilp_sat(
+    answer = ilp_sat(
         ['a,b,c', '-a,b,-c', '-d,-b', '-a,c', '-b,a'])
-    printAnswer(answer)
-    # print(prob)
+    print(answer)
 
 # Test getVarLabels
 
@@ -139,26 +158,25 @@ def test_getVarLabels():
 
 
 def test_ilp_sat():
-    prob, value, answer = ilp_sat(
+    answer = ilp_sat(
         ['a,b,c', '-a,b,-c', '-d,-b', '-a,c', '-b,a'])
-    print(answer)
     assert answer['a'] == 1
-    assert answer['_a'] == 0
     assert answer['b'] == 1
-    assert answer['_b'] == 0
     assert answer['c'] == 1
-    assert answer['_c'] == 0
     assert answer['d'] == 0
-    assert answer['_d'] == 1
 
 
 def test_ilp_sat1():
-    prob, value, answer = ilp_sat(
+    answer = ilp_sat(
         ['a,-b,-c'])
 
     assert answer['a'] == 1
-    assert answer['_a'] == 0
     assert answer['b'] == 0
-    assert answer['_b'] == 1
     assert answer['c'] == 1
-    assert answer['_c'] == 0
+
+
+def test_ilp_sat2():
+    answer = ilp_sat(['a,b,c', '-a,-b,-c'])
+    assert answer['a'] == 1
+    assert answer['b'] == 1
+    assert answer['c'] == 0
