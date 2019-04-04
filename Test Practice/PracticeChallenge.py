@@ -53,34 +53,39 @@ def binTreeSolution(arr):
         levelNum += 1
         levels.append(currLevel)
 
+    leftBranch = 0
+    rightBranch = 0
+    for level in range(1, len(levels)):
+        halfMark = int(2 ** level / 2)
+        if len(levels[level]) <= halfMark:
+            for value in levels[level]:
+                if(value > 0):
+                    leftBranch += value
+        else:
+            for value in levels[level][:halfMark]:
+                if(value > 0):
+                    leftBranch += value
+            for value in levels[level][halfMark:]:
+                if(value > 0):
+                    rightBranch += value
+
     print(levels)
 
+    if leftBranch == rightBranch:
+        return ""
+    return "Left" if leftBranch > rightBranch else "Right"
 
-binTreeSolution([3, 6, 2, 9, -1, 10])
+
+print(binTreeSolution([3, 6, 2, 9, -1, 10]))
+print(binTreeSolution([3]))
+print(binTreeSolution([3, 6, 12]))
+
 binTreeSolution([3, 6, 2, 9, -1, 10, 2, 5, 6, 7,
                  8, 2, 4, 5, 4, 3, 56, 3, 6, 2])
 
-# class Node:
-#     def __init__(self, value, parent=None, leftChild=None, rightChild=None):
-#         self.value = value
-#         self.parent = parent
-#         self.leftChild = leftChild
-#         self.rightChild = rightChild
 
-
-# class BinaryTree:
-#     def __init__(self, root):
-#         self.root = root
-#         self.nextOpening = root.leftChild
-
-#     def insertNode(node):
-#         self.nextOpening = node
-#         self.nextOpening = self.findNextOpening()
-
-#     def findNextOpening()
-#        # find if the current next opening value is a left or right child
-#        if self.nextOpening == self.nextOpening.parent.rightChild:
-#             self.nextOpening = self.nextOpening.parent.left
-
-#         # move on to the next node in that level
-#         self.nextOpening=
+def test_binTreeSolution():
+    assert binTreeSolution([3, 6, 2, 9, -1, 10]) == "Left"
+    assert binTreeSolution([3]) == ""
+    assert binTreeSolution([3, 2, 10]) == "Right"
+    assert binTreeSolution([3,2,3,56,-1,4,2,1,3,4,6,7,5,4,3,2])== "Left"
