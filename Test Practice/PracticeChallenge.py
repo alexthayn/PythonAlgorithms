@@ -88,4 +88,5 @@ def test_binTreeSolution():
     assert binTreeSolution([3, 6, 2, 9, -1, 10]) == "Left"
     assert binTreeSolution([3]) == ""
     assert binTreeSolution([3, 2, 10]) == "Right"
-    assert binTreeSolution([3,2,3,56,-1,4,2,1,3,4,6,7,5,4,3,2])== "Left"
+    assert binTreeSolution(
+        [3, 2, 3, 56, -1, 4, 2, 1, 3, 4, 6, 7, 5, 4, 3, 2]) == "Left"
